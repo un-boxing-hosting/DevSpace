@@ -153,7 +153,8 @@ public class ServerWebSocket
 
     public async Task DiscoverAsync(ServerData server)
     {
-        HttpRequestMessage Req = new HttpRequestMessage(HttpMethod.Get, "https://" + server.AgentIp + ":" + server.AgentPort + "/discover");
+        // HttpRequestMessage Req = new HttpRequestMessage(HttpMethod.Get, "https://" + server.AgentIp + ":" + server.AgentPort + "/discover");
+        HttpRequestMessage Req = new HttpRequestMessage(HttpMethod.Get, server.AgentIp + ":" + server.AgentPort + "/discover");
         Req.Headers.Add("Connection", "Upgrade");
         HttpResponseMessage? Response = null;
         try

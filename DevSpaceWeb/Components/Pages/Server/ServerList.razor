@@ -217,8 +217,8 @@
                 if (string.IsNullOrEmpty(data.Ip))
                     return "Server ip is required.";
 
-                if (Uri.CheckHostName(data.Ip) == UriHostNameType.Unknown)
-                    return "Server ip has invalid format.";
+                //if (Uri.CheckHostName(data.Ip) == UriHostNameType.Unknown)
+                   // return "Server ip has invalid format.";
 
                 IPAddress? address = null;
                 if (!IPAddress.TryParse(data.Ip, out address))
