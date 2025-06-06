@@ -145,6 +145,35 @@ else
 
                 <RadzenTableRow>
                     <RadzenTableCell>
+                        Status
+                    </RadzenTableCell>
+                    <RadzenTableCell>
+                        <RadzenStack Orientation="Orientation.Horizontal" Gap="6px" Wrap="FlexWrap.Wrap">
+                        @if (Image.ContainersCount != -1 && Server.HasVersionOrHigher(new System.Version(1, 0, 53)))
+                        {
+                            @if (Image.ContainersCount == 0)
+                            {
+                                <RadzenBadge Shade="Shade.Lighter" IsPill="true" BadgeStyle="BadgeStyle.Warning" Text="Unused" />
+                            }
+                            else
+                            {
+                                <RadzenBadge Shade="Shade.Lighter" IsPill="true" BadgeStyle="BadgeStyle.Info" Text="@(Image.ContainersCount + " Container" + (Image.ContainersCount != 1 ? "s" : ""))" />
+                            }
+                        }
+                        @if (Image.IsLocal)
+                        {
+                            <RadzenBadge Shade="Shade.Dark" IsPill="true" BadgeStyle="BadgeStyle.Info" Text="Local" />
+                        }
+                        @if (Image.IsParent)
+                        {
+                            <RadzenBadge Shade="Shade.Dark" IsPill="true" BadgeStyle="BadgeStyle.Info" Text="Parent" />
+                        }
+                        </RadzenStack>
+                    </RadzenTableCell>
+                </RadzenTableRow>
+
+                <RadzenTableRow>
+                    <RadzenTableCell>
                         Links
                     </RadzenTableCell>
                     <RadzenTableCell>
@@ -474,9 +503,9 @@ else
                             }
                         </Template>
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn Title="Actions" Width="100px" Filterable="false">
+                    <RadzenDataGridColumn Title="Actions" Width="80px" Filterable="false">
                         <Template>
-                            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center">
+                            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="6px;">
                                 <RadzenButton Click="@(args => ShowContextMenuWithControlsItems(context, args))" Icon="power_settings_new" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" Disabled="@(!CanControlContainer || IsActionRunning)" />
                                 <RadzenButton Click="@(args => ShowContextMenuWithManageItems(context, args))" Icon="build" ButtonStyle="ButtonStyle.Primary" Size="ButtonSize.Small" />
                             </RadzenStack>

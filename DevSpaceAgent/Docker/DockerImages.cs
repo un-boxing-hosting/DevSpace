@@ -1,4 +1,5 @@
-﻿using DevSpaceShared;
+﻿using CliWrap;
+using DevSpaceShared;
 using DevSpaceShared.Data;
 using DevSpaceShared.Events.Docker;
 using Docker.DotNet;
@@ -59,12 +60,12 @@ public static class DockerImages
         });
     }
 
-    public static async Task<ImagesPruneResponse> PruneImagesAsync(DockerClient client)
+    public static async Task PruneImagesAsync(DockerClient client)
     {
-        return await client.Images.PruneImagesAsync(new ImagesPruneParameters
-        {
-
-        });
+        await Cli.Wrap("docker")
+            .WithArguments(["image", "prune", "-a", "-f"])
+            .WithValidation(CommandResultValidation.None)
+            .ExecuteAsync();
     }
 
     public static async Task PullImageAsync(DockerClient client, string? name)
@@ -195,7 +196,29 @@ public static class DockerImages
             case ControlImageType.View:
                 {
                     ImageInspectResponse Image = await client.Images.InspectImageAsync(id);
-                    return DockerImageInfo.Create(Image);
+
+                    DockerImageInfo Info = DockerImageInfo.Create(Image);
+
+                    try
+                    {
+                        IList<ContainerListResponse> Containers = await client.Containers.ListContainersAsync(new ContainersListParameters
+                        {
+                            All = true,
+                            Filters = new Dictionary<string, IDictionary<string, bool>>
+                            {
+                                { "ancestor", new Dictionary<string, bool>
+                                { { id, true }}
+                                }
+                            }
+                        });
+                        Info.ContainersCount = Containers.Count;
+                    }
+                    catch
+                    {
+                        Info.ContainersCount = -1;
+                    }
+
+                    return Info;
                 }
             case ControlImageType.Layers:
                 return await client.Images.GetImageHistoryAsync(id);
